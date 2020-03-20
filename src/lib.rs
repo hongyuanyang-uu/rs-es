@@ -120,7 +120,7 @@ impl Client {
         &self,
         url: &str,
         action: impl FnOnce(Url) -> RequestBuilder,
-    ) -> reqwest::Response {
+    ) -> Result<reqwest::Response, EsError> {
         let url = self.full_url(url);
         let username = self.base_url.username();
         let mut method = action(url);
