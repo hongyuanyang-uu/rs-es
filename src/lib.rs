@@ -79,6 +79,7 @@ impl EsResponse for reqwest::Response {
 fn do_req(resp: reqwest::Response) -> Result<reqwest::Response, EsError> {
     let mut resp = resp;
     let status = resp.status();
+    debug!("req status:{:?}", status);
     match status {
         StatusCode::OK | StatusCode::CREATED | StatusCode::NOT_FOUND => Ok(resp),
         _ => Err(EsError::from(&mut resp)),
@@ -119,7 +120,7 @@ impl Client {
         &self,
         url: &str,
         action: impl FnOnce(Url) -> RequestBuilder,
-    ) -> Result<reqwest::Response, EsError> {
+    ) -> reqwest::Response {
         let url = self.full_url(url);
         let username = self.base_url.username();
         let mut method = action(url);
