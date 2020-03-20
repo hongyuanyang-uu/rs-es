@@ -115,11 +115,18 @@ impl<'a, 'b, E: Serialize + 'b> IndexOperation<'a, 'b, E> {
                 }
             }
         })?;
-        debug!("send resp:{:?}",response);
-        if response.status() == 201||response.status() == 201 {
-            return Ok(response.text().unwrap())
+        match response {
+            Ok(response) => {
+                debug!("send resp:{:?}", response);
+                if response.status() == 201 || response.status() == 201 {
+                    return Ok(response.text().unwrap())
+                }
+                Err(response.text().unwrap())
+            },
+            Err(result) => {
+                Err(result.to_string())
+            }
         }
-        Err(response.text().unwrap())
     }
 }
 
