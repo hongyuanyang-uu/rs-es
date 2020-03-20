@@ -115,7 +115,7 @@ impl<'a, 'b, E: Serialize + 'b> IndexOperation<'a, 'b, E> {
                 }
             }
         })?;
-        debug!("send resp:{?}",response);
+        debug!("send resp:{:?}",response);
         Ok(response.read_response()?)
     }
 }
