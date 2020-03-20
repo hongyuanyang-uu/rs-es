@@ -217,7 +217,7 @@ pub mod tests {
     pub fn make_client() -> Client {
         let hostname = match env::var("ES_HOST") {
             Ok(val) => val,
-            Err(_) => "http://localhost:9200".to_owned(),
+            Err(_) => "http://172.18.11.38:9200".to_owned(),
         };
         Client::init(&hostname).unwrap()
     }
