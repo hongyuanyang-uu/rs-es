@@ -24,6 +24,7 @@ use crate::{error::EsError, Client, EsResponse};
 
 use super::common::{OptionVal, Options};
 
+use log::debug;
 /// Values for the op_type option
 pub enum OpType {
     Create,
@@ -95,10 +96,10 @@ impl<'a, 'b, E: Serialize + 'b> IndexOperation<'a, 'b, E> {
     add_option!(with_refresh, "refresh");
     add_option!(with_timeout, "timeout");
 
-    pub fn send(&'b mut self) -> Result<IndexResult, EsError> {
+    pub fn send(&'b mut self) -> Result<String, String> {
         // Ignoring status_code as everything should return an IndexResult or
         // already be an error
-        let response = (match self.id {
+        let mut response = (match self.id {
             Some(ref id) => {
                 let url = format!("/{}/{}/{}{}", self.index, self.doc_type, id, self.options);
                 match self.document {
@@ -113,8 +114,19 @@ impl<'a, 'b, E: Serialize + 'b> IndexOperation<'a, 'b, E> {
                     None => self.client.post_op(&url),
                 }
             }
-        })?;
-        Ok(response.read_response()?)
+        });
+        match response {
+            Ok(mut response) => {
+                let info = response.text().unwrap();
+                if response.status() == 200 || response.status() == 201 {
+                    return Ok(info)
+                }
+                Err(info)
+            },
+            Err(result) => {
+                Err(result.to_string())
+            }
+        }
     }
 }
 

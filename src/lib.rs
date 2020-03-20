@@ -47,7 +47,7 @@ use reqwest::{header::CONTENT_TYPE, RequestBuilder, StatusCode, Url};
 use serde::{de::DeserializeOwned, ser::Serialize};
 
 use crate::error::EsError;
-
+use log::{debug, info};
 pub trait EsResponse {
     fn status_code(&self) -> StatusCode;
     fn read_response<R>(self) -> Result<R, EsError>
@@ -79,6 +79,7 @@ impl EsResponse for reqwest::Response {
 fn do_req(resp: reqwest::Response) -> Result<reqwest::Response, EsError> {
     let mut resp = resp;
     let status = resp.status();
+    debug!("req status:{:?}", status);
     match status {
         StatusCode::OK | StatusCode::CREATED | StatusCode::NOT_FOUND => Ok(resp),
         _ => Err(EsError::from(&mut resp)),
@@ -216,7 +217,7 @@ pub mod tests {
     pub fn make_client() -> Client {
         let hostname = match env::var("ES_HOST") {
             Ok(val) => val,
-            Err(_) => "http://localhost:9200".to_owned(),
+            Err(_) => "http://172.18.11.38:9200".to_owned(),
         };
         Client::init(&hostname).unwrap()
     }
