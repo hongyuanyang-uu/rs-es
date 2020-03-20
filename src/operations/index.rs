@@ -24,6 +24,7 @@ use crate::{error::EsError, Client, EsResponse};
 
 use super::common::{OptionVal, Options};
 
+use log::debug;
 /// Values for the op_type option
 pub enum OpType {
     Create,
@@ -114,6 +115,7 @@ impl<'a, 'b, E: Serialize + 'b> IndexOperation<'a, 'b, E> {
                 }
             }
         })?;
+        debug!("send resp:{?}",response);
         Ok(response.read_response()?)
     }
 }
