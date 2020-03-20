@@ -47,7 +47,7 @@ use reqwest::{header::CONTENT_TYPE, RequestBuilder, StatusCode, Url};
 use serde::{de::DeserializeOwned, ser::Serialize};
 
 use crate::error::EsError;
-
+use log::{debug, info};
 pub trait EsResponse {
     fn status_code(&self) -> StatusCode;
     fn read_response<R>(self) -> Result<R, EsError>
