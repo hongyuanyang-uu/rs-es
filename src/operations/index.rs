@@ -114,14 +114,14 @@ impl<'a, 'b, E: Serialize + 'b> IndexOperation<'a, 'b, E> {
                     None => self.client.post_op(&url),
                 }
             }
-        })?;
+        });
         match response {
-            Ok(response) => {
-                debug!("send resp:{:?}", response);
+            Ok(mut response) => {
+                let info = response.text().unwrap();
                 if response.status() == 201 || response.status() == 201 {
-                    return Ok(response.text().unwrap())
+                    return Ok(info)
                 }
-                Err(response.text().unwrap())
+                Err(info)
             },
             Err(result) => {
                 Err(result.to_string())
