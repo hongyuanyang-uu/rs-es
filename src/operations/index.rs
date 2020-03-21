@@ -118,7 +118,7 @@ impl<'a, 'b, E: Serialize + 'b> IndexOperation<'a, 'b, E> {
         match response {
             Ok(mut response) => {
                 let info = response.text().unwrap();
-                if response.status() == 201 || response.status() == 201 {
+                if response.status() == 200 || response.status() == 201 {
                     return Ok(info)
                 }
                 Err(info)
